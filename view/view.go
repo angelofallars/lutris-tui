@@ -64,10 +64,12 @@ func (m model) View() string {
 	s := ""
 
 	for i, game := range m.games[m.start:m.end] {
-		game_cell := styleGame.Render(game.Name)
+		var game_cell string
 
 		if game.IsRunning {
-			game_cell = styleGameRunning.Render(game_cell)
+			game_cell = styleGameRunning.Render(game.Name)
+		} else {
+			game_cell = styleGame.Render(game.Name)
 		}
 
 		var cursor string
