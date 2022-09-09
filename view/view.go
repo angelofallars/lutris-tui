@@ -57,7 +57,7 @@ var styleGame = lipgloss.NewStyle().
 	Background(lipgloss.Color("#217A9A")).
 	Foreground(lipgloss.Color("#FFFFFF"))
 
-var styleGameRunning = lipgloss.NewStyle().
+var styleGameRunning = styleGame.Copy().
 	Background(lipgloss.Color("#603B6F"))
 
 func (m model) View() string {
