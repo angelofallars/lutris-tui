@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 var LutrisExecutableNotFound = errors.New("lutris executable not found")
@@ -62,10 +63,15 @@ type Game struct {
 	LastPlayed string `json:"lastplayed"`
 	IsRunning  bool
 	lutrisPath string
+	command    *exec.Cmd
 }
 
 func (g *Game) Start() (*exec.Cmd, error) {
 	command := exec.Command(g.lutrisPath, fmt.Sprintf("lutris:rungameid/%v", g.Id))
+
+	// Needed so that we can kill all children/grandchildren processes
+	// by making them have the same PGID
+	command.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	err := command.Start()
 
@@ -73,5 +79,12 @@ func (g *Game) Start() (*exec.Cmd, error) {
 		return nil, errors.New(fmt.Sprintf("lutris command failed, error: '%v'", err))
 	}
 
+	g.command = command
+
 	return command, nil
+}
+
+func (g *Game) Stop() {
+	syscall.Kill(-g.command.Process.Pid, syscall.SIGKILL)
+	g.IsRunning = false
 }

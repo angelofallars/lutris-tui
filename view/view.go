@@ -129,8 +129,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			// Run the game
-			m.games[cursorRealIdx].IsRunning = true
-			return m, runGame(&m.games[cursorRealIdx])
+			if m.games[cursorRealIdx].IsRunning {
+				m.games[cursorRealIdx].Stop()
+			} else {
+				m.games[cursorRealIdx].IsRunning = true
+				return m, runGame(&m.games[cursorRealIdx])
+			}
 		}
 	}
 
