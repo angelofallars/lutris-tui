@@ -127,7 +127,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			// Run the game
-			return m, runGame(m.games[m.start+m.cursor])
+			m.games[m.start+m.cursor].IsRunning = true
+			return m, runGame(&m.games[m.start+m.cursor])
 		}
 	}
 
@@ -136,13 +137,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func runGame(game wrapper.Game) tea.Cmd {
+func runGame(game *wrapper.Game) tea.Cmd {
 	return func() tea.Msg {
-		_, err := game.Start()
+		command, err := game.Start()
 
 		if err != nil {
 			return errMsg{err}
 		}
+
+		command.Process.Wait()
+
+		game.IsRunning = false
 
 		return statusMsg(0)
 	}

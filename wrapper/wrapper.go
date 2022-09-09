@@ -73,7 +73,5 @@ func (g *Game) Start() (*exec.Cmd, error) {
 		return nil, errors.New(fmt.Sprintf("lutris command failed, error: '%v'", err))
 	}
 
-	g.IsRunning = true
-
 	return command, nil
 }
