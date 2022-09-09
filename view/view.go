@@ -110,7 +110,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "down", "j":
-			if m.cursor < GAMES_PER_PAGE-1 {
+			if m.cursor < m.end-m.start-1 {
 				m.cursor++
 			} else if !m.paginator.OnLastPage() {
 				m.cursor = 0
