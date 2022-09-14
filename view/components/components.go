@@ -1,8 +1,8 @@
 package components
 
 import (
+	"lutris-tui/lutris"
 	S "lutris-tui/view/styles"
-	lutris "lutris-tui/wrapper"
 
 	"github.com/charmbracelet/lipgloss"
 )

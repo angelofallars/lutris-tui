@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"lutris-tui/lutris"
 	view "lutris-tui/view"
-	lutris "lutris-tui/wrapper"
 )
 
 func main() {

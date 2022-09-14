@@ -1,7 +1,7 @@
 package view
 
 import (
-	lutris "lutris-tui/wrapper"
+	"lutris-tui/lutris"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

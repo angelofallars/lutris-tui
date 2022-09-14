@@ -1,7 +1,7 @@
 package view
 
 import (
-	lutris "lutris-tui/wrapper"
+	"lutris-tui/lutris"
 
 	"github.com/charmbracelet/bubbles/paginator"
 	tea "github.com/charmbracelet/bubbletea"
