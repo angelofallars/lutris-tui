@@ -54,7 +54,7 @@ func GamesGrid(grid [][]lutris.Game, cursorX int, cursorY int) string {
 
 			gameView = Game(game.Name, gameState)
 
-			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, " ", gameView)
+			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, "  ", gameView)
 		}
 
 		gridView += columnView + "\n"

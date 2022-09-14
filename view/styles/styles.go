@@ -24,8 +24,9 @@ var StyleGame = lipgloss.NewStyle().
 	PaddingBottom(2).
 	PaddingRight(2).
 	Margin(1, 0).
-	Width(30).
-	MaxHeight(3).
+	Width(22).
+	Height(4).
+	MaxHeight(4).
 	Align(lipgloss.Left).
 	Background(ColorCellBg1).
 	Foreground(ColorFg1)
