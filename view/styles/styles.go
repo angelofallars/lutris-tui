@@ -18,7 +18,7 @@ var StyleColoredText = lipgloss.NewStyle().
 	Foreground(ColorCellBg1)
 
 var StyleGamesView = lipgloss.NewStyle().
-	Height(30)
+	Height(3*12 + 1)
 
 var StyleGame = lipgloss.NewStyle().
 	PaddingBottom(2).
