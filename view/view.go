@@ -25,17 +25,21 @@ type CursorPosition struct {
 	y int
 }
 
+type gamesGrid struct {
+	cells     [][]lutris.Game
+	cursor    CursorPosition
+	paginator paginator.Model
+	start     int
+	end       int
+	rowCount  int
+}
+
 type model struct {
 	lutrisClient lutris.LutrisClient
 	games        []lutris.Game
-	cursor       CursorPosition
-	paginator    paginator.Model
-	pageStartIdx int
-	pageEndIdx   int
+	grid         gamesGrid
 	statusBar    string
-	gamesGrid    [][]lutris.Game
 	selectedGame *lutris.Game
-	rowCount     int
 }
 
 func initialModel(lutrisClient lutris.LutrisClient, games []lutris.Game) model {
@@ -47,8 +51,10 @@ func initialModel(lutrisClient lutris.LutrisClient, games []lutris.Game) model {
 	model := model{
 		lutrisClient: lutrisClient,
 		games:        games,
-		paginator:    p,
-		rowCount:     3,
+		grid: gamesGrid{
+			paginator: p,
+			rowCount:  3,
+		},
 	}
 
 	model.updateGameGrid(games, 0, _GAMES_PER_PAGE)
@@ -65,11 +71,11 @@ const _GAMES_PER_PAGE = 18
 func (m model) View() string {
 	s := ""
 
-	s += component.Main(m.gamesGrid, m.cursor.x, m.cursor.y)
+	s += component.Main(m.grid.cells, m.grid.cursor.x, m.grid.cursor.y)
 
 	s += S.StyleDarkerText.Render("  ──────────────────────────────") + "\n"
 
-	s += "               " + S.StyleDarkerText.Render(m.paginator.View()) + "\n"
+	s += "               " + S.StyleDarkerText.Render(m.grid.paginator.View()) + "\n"
 	s += "  " + S.StyleNormal.Render("↑/k - up, ↓/j - down, q - quit") + "\n"
 
 	if len(m.statusBar) > 0 {
@@ -88,7 +94,7 @@ func (m *model) updateGameGrid(games []lutris.Game, start int, end int) {
 	for i := start; i < end; {
 		var rowGames []lutris.Game
 
-		for j := 0; j < m.rowCount; j++ {
+		for j := 0; j < m.grid.rowCount; j++ {
 			if i < end {
 				rowGames = append(rowGames, games[i])
 				i++
@@ -100,7 +106,7 @@ func (m *model) updateGameGrid(games []lutris.Game, start int, end int) {
 		gameLayout = append(gameLayout, rowGames)
 	}
 
-	m.gamesGrid = gameLayout
+	m.grid.cells = gameLayout
 }
 
 type statusMsg int
@@ -119,34 +125,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "down", "j":
-			if m.cursor.y < len(m.gamesGrid)-1 {
-				gamesBelowCount := len(m.gamesGrid[m.cursor.y+1])
-				if m.cursor.x < gamesBelowCount {
-					m.cursor.y++
+			if m.grid.cursor.y < len(m.grid.cells)-1 {
+				gamesBelowCount := len(m.grid.cells[m.grid.cursor.y+1])
+				if m.grid.cursor.x < gamesBelowCount {
+					m.grid.cursor.y++
 					break
 				}
 			}
-			if !m.paginator.OnLastPage() {
-				m.cursor.y = 0
-				m.paginator.NextPage()
+			if !m.grid.paginator.OnLastPage() {
+				m.grid.cursor.y = 0
+				m.grid.paginator.NextPage()
 			}
 
 		case "up", "k":
-			if m.cursor.y > 0 {
-				m.cursor.y--
-			} else if m.paginator.Page != 0 {
-				m.cursor.y = 0
-				m.paginator.PrevPage()
+			if m.grid.cursor.y > 0 {
+				m.grid.cursor.y--
+			} else if m.grid.paginator.Page != 0 {
+				m.grid.cursor.y = 0
+				m.grid.paginator.PrevPage()
 			}
 
 		case "right", "l":
-			if m.cursor.x < len(m.gamesGrid[m.cursor.y])-1 {
-				m.cursor.x++
+			if m.grid.cursor.x < len(m.grid.cells[m.grid.cursor.y])-1 {
+				m.grid.cursor.x++
 			}
 
 		case "left", "h":
-			if m.cursor.x > 0 {
-				m.cursor.x--
+			if m.grid.cursor.x > 0 {
+				m.grid.cursor.x--
 			}
 
 		case "enter":
@@ -161,9 +167,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	m.pageStartIdx, m.pageEndIdx = m.paginator.GetSliceBounds(len(m.games))
-	m.updateGameGrid(m.games, m.pageStartIdx, m.pageEndIdx)
-	m.selectedGame = &m.gamesGrid[m.cursor.y][m.cursor.x]
+	m.grid.start, m.grid.end = m.grid.paginator.GetSliceBounds(len(m.games))
+	m.updateGameGrid(m.games, m.grid.start, m.grid.end)
+	m.selectedGame = &m.grid.cells[m.grid.cursor.y][m.grid.cursor.x]
 
 	return m, nil
 }
