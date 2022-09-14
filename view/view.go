@@ -38,14 +38,14 @@ type model struct {
 func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
 	p := paginator.New()
 	p.Type = paginator.Arabic
-	p.PerPage = GAMES_PER_PAGE
+	p.PerPage = _GAMES_PER_PAGE
 	p.SetTotalPages(len(games))
 
 	return model{
 		lutris:    wrapper,
 		games:     games,
 		paginator: p,
-		gamesView: paginateTwoColumnGames(games, 0, GAMES_PER_PAGE),
+		gamesView: paginateTwoColumnGames(games, 0, _GAMES_PER_PAGE),
 	}
 }
 
@@ -53,7 +53,7 @@ func (m model) Init() tea.Cmd {
 	return nil
 }
 
-const GAMES_PER_PAGE = 12
+const _GAMES_PER_PAGE = 12
 
 func (m model) View() string {
 	s := ""
