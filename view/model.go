@@ -38,12 +38,10 @@ type CursorPosition struct {
 	y int
 }
 
-const _GAMES_PER_PAGE = 18
-
 func initialModel(lutrisClient lutris.LutrisClient, games []lutris.Game) model {
 	p := paginator.New()
 	p.Type = paginator.Arabic
-	p.PerPage = _GAMES_PER_PAGE
+	p.PerPage = 18
 	p.SetTotalPages(len(games))
 
 	model := model{
