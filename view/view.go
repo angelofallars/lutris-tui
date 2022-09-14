@@ -27,6 +27,7 @@ type model struct {
 	start     int
 	end       int
 	statusBar string
+	gamesView [][]wrapper.Game
 }
 
 func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
@@ -39,6 +40,7 @@ func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
 		lutris:    wrapper,
 		games:     games,
 		paginator: p,
+		gamesView: paginateTwoColumnGames(games, 0, GAMES_PER_PAGE),
 	}
 }
 
@@ -55,29 +57,25 @@ func (m model) View() string {
 
 	var selected_game wrapper.Game
 
-	for i, game := range m.games[m.start:m.end] {
-		var game_cell string
+	for i, row := range m.gamesView {
+		var columnView string
 
-		if game.IsRunning {
-			game_cell = styleGameRunning.Render(game.Name)
-		} else if i == m.cursor {
-			game_cell = styleGameSelected.Render(game.Name)
-		} else {
-			game_cell = styleGame.Render(game.Name)
+		for _, game := range row {
+			var gameCell string
+
+			if game.IsRunning {
+				gameCell = styleGameRunning.Render(game.Name)
+				// TODO: turn cursor into 2d array
+			} else if i == m.cursor {
+				gameCell = styleGameSelected.Render(game.Name)
+			} else {
+				gameCell = styleGame.Render(game.Name)
+			}
+
+			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, " ", gameCell)
 		}
 
-		var cursor string
-
-		if i == m.cursor {
-			cursor = styleNormal.Render("▌\n▌")
-			selected_game = game
-		} else {
-			cursor = " "
-		}
-
-		game_field := lipgloss.JoinHorizontal(lipgloss.Center, cursor, " ", game_cell)
-
-		gamesView += game_field + "\n"
+		gamesView += columnView + "\n"
 	}
 
 	gamesView = styleGamesView.Render(gamesView)
@@ -100,6 +98,21 @@ func (m model) View() string {
 	s += styleDarkerText.Render("  LUTRIS TUI WRAPPER (alpha)") + "\n"
 
 	return s
+}
+
+func paginateTwoColumnGames(games []wrapper.Game, start int, end int) [][]wrapper.Game {
+	var gameLayout = [][]wrapper.Game{}
+
+	for i := start; i < end; i++ {
+		if i+1 < end {
+			gameLayout = append(gameLayout, []wrapper.Game{games[i], games[i+1]})
+			i++
+		} else {
+			gameLayout = append(gameLayout, []wrapper.Game{games[i]})
+		}
+	}
+
+	return gameLayout
 }
 
 func showGameStats(game wrapper.Game) string {
@@ -174,6 +187,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	m.start, m.end = m.paginator.GetSliceBounds(len(m.games))
+	m.gamesView = paginateTwoColumnGames(m.games, m.start, m.end)
 
 	return m, nil
 }
