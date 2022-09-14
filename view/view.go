@@ -114,7 +114,7 @@ func (m model) View() string {
 	return s
 }
 
-func (m model) updateGameGrid(games []wrapper.Game, start int, end int) {
+func (m *model) updateGameGrid(games []wrapper.Game, start int, end int) {
 	var gameLayout = [][]wrapper.Game{}
 
 	for i := start; i < end; i++ {
