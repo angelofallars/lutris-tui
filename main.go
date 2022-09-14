@@ -8,20 +8,20 @@ import (
 )
 
 func main() {
-	lutris, err := wrapper.NewLutrisClient()
+	client, err := wrapper.NewLutrisClient()
 
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
 
 	fmt.Println("LOADING ...")
-	games, err := lutris.FetchGames()
+	games, err := client.FetchGames()
 
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
 
-	view.Start(lutris, games)
+	view.Start(client, games)
 
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
