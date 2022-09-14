@@ -133,8 +133,6 @@ type statusMsg int
 type errMsg struct{ err error }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	cursorRealIdx := m.start
-
 	switch msg := msg.(type) {
 
 	case errMsg:
@@ -179,11 +177,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			// Run the game
-			if m.games[cursorRealIdx].IsRunning {
-				m.games[cursorRealIdx].Stop()
+			selectedGame := &m.gamesGrid[m.cursor.y][m.cursor.x]
+
+			if selectedGame.IsRunning {
+				selectedGame.Stop()
 			} else {
-				m.games[cursorRealIdx].IsRunning = true
-				return m, runGame(&m.games[cursorRealIdx])
+				selectedGame.IsRunning = true
+				return m, runGame(selectedGame)
 			}
 		}
 	}
