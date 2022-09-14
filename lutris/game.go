@@ -3,6 +3,7 @@ package lutris
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os/exec"
 	"syscall"
 )
@@ -41,7 +42,15 @@ func (g *Game) Start() (*exec.Cmd, error) {
 	return command, nil
 }
 
+func killRecursively(command *exec.Cmd) {
+	if command.SysProcAttr.Setpgid == false {
+		log.Fatal("Cannot kill all subprocesses")
+	}
+
+	syscall.Kill(-command.Process.Pid, syscall.SIGKILL)
+}
+
 func (g *Game) Stop() {
-	syscall.Kill(-g.command.Process.Pid, syscall.SIGKILL)
+	killRecursively(g.command)
 	g.IsRunning = false
 }
