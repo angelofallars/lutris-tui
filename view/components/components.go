@@ -58,7 +58,7 @@ func GamesGrid(grid [][]wrapper.Game, cursorX int, cursorY int) string {
 		gridView += columnView + "\n"
 	}
 
-	gridView = S.StyleGamesView.Render(gridView)
+	gridView = S.StyleGamesGrid.Render(gridView)
 
 	return gridView
 }

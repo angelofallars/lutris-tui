@@ -17,7 +17,7 @@ var StyleDarkerText = lipgloss.NewStyle().
 var StyleColoredText = lipgloss.NewStyle().
 	Foreground(ColorCellBg1)
 
-var StyleGamesView = lipgloss.NewStyle().
+var StyleGamesGrid = lipgloss.NewStyle().
 	Height(3*12 + 1)
 
 var StyleGame = lipgloss.NewStyle().
