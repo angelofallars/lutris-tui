@@ -43,12 +43,15 @@ func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
 	p.PerPage = _GAMES_PER_PAGE
 	p.SetTotalPages(len(games))
 
-	return model{
+	model := model{
 		lutris:    wrapper,
 		games:     games,
 		paginator: p,
-		gamesGrid: updateGameGrid(games, 0, _GAMES_PER_PAGE),
 	}
+
+	model.updateGameGrid(games, 0, _GAMES_PER_PAGE)
+
+	return model
 }
 
 func (m model) Init() tea.Cmd {
@@ -111,7 +114,7 @@ func (m model) View() string {
 	return s
 }
 
-func updateGameGrid(games []wrapper.Game, start int, end int) [][]wrapper.Game {
+func (m model) updateGameGrid(games []wrapper.Game, start int, end int) {
 	var gameLayout = [][]wrapper.Game{}
 
 	for i := start; i < end; i++ {
@@ -123,7 +126,7 @@ func updateGameGrid(games []wrapper.Game, start int, end int) [][]wrapper.Game {
 		}
 	}
 
-	return gameLayout
+	m.gamesGrid = gameLayout
 }
 
 type statusMsg int
@@ -186,7 +189,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	m.start, m.end = m.paginator.GetSliceBounds(len(m.games))
-	m.gamesGrid = updateGameGrid(m.games, m.start, m.end)
+	m.updateGameGrid(m.games, m.start, m.end)
 
 	return m, nil
 }
