@@ -19,10 +19,15 @@ func Start(wrapper wrapper.Wrapper, games []wrapper.Game) error {
 	return nil
 }
 
+type CursorPosition struct {
+	x int
+	y int
+}
+
 type model struct {
 	lutris    wrapper.Wrapper
 	games     []wrapper.Game
-	cursor    int
+	cursor    CursorPosition
 	paginator paginator.Model
 	start     int
 	end       int
@@ -60,14 +65,14 @@ func (m model) View() string {
 	for i, row := range m.gamesView {
 		var columnView string
 
-		for _, game := range row {
+		for j, game := range row {
 			var gameCell string
 
 			if game.IsRunning {
 				gameCell = styleGameRunning.Render(game.Name)
-				// TODO: turn cursor into 2d array
-			} else if i == m.cursor {
+			} else if j == m.cursor.x && i == m.cursor.y {
 				gameCell = styleGameSelected.Render(game.Name)
+				selected_game = game
 			} else {
 				gameCell = styleGame.Render(game.Name)
 			}
@@ -146,7 +151,7 @@ type statusMsg int
 type errMsg struct{ err error }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	cursorRealIdx := m.start + m.cursor
+	cursorRealIdx := m.start
 
 	switch msg := msg.(type) {
 
@@ -160,19 +165,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "down", "j":
-			if m.cursor < m.end-m.start-1 {
-				m.cursor++
-			} else if !m.paginator.OnLastPage() {
-				m.cursor = 0
+			if m.cursor.y < len(m.gamesView)-1 {
+				gamesBelowCount := len(m.gamesView[m.cursor.y+1])
+				if m.cursor.x < gamesBelowCount {
+					m.cursor.y++
+					break
+				}
+			}
+			if !m.paginator.OnLastPage() {
+				m.cursor.y = 0
 				m.paginator.NextPage()
 			}
 
 		case "up", "k":
-			if m.cursor > 0 {
-				m.cursor--
+			if m.cursor.y > 0 {
+				m.cursor.y--
 			} else if m.paginator.Page != 0 {
-				m.cursor = GAMES_PER_PAGE - 1
+				m.cursor.y = 0
 				m.paginator.PrevPage()
+			}
+
+		case "right", "l":
+			if m.cursor.x < len(m.gamesView[m.cursor.y])-1 {
+				m.cursor.x++
+			}
+
+		case "left", "h":
+			if m.cursor.x > 0 {
+				m.cursor.x--
 			}
 
 		case "enter":
