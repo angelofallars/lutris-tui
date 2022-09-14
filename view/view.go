@@ -9,8 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func Start(wrapper lutris.LutrisClient, games []lutris.Game) error {
-	model := initialModel(wrapper, games)
+func Start(lutrisClient lutris.LutrisClient, games []lutris.Game) error {
+	model := initialModel(lutrisClient, games)
 	p := tea.NewProgram(model, tea.WithAltScreen())
 
 	if err := p.Start(); err != nil {
@@ -38,14 +38,14 @@ type model struct {
 	rowCount     int
 }
 
-func initialModel(wrapper lutris.LutrisClient, games []lutris.Game) model {
+func initialModel(lutrisClient lutris.LutrisClient, games []lutris.Game) model {
 	p := paginator.New()
 	p.Type = paginator.Arabic
 	p.PerPage = _GAMES_PER_PAGE
 	p.SetTotalPages(len(games))
 
 	model := model{
-		lutrisClient: wrapper,
+		lutrisClient: lutrisClient,
 		games:        games,
 		paginator:    p,
 		rowCount:     3,
