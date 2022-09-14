@@ -53,8 +53,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "enter":
-			// Run the game
-
 			if m.selectedGame.IsRunning {
 				m.selectedGame.Stop()
 			} else {
