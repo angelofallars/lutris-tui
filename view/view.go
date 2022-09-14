@@ -60,7 +60,7 @@ func (m model) Init() tea.Cmd {
 	return nil
 }
 
-const _GAMES_PER_PAGE = 12
+const _GAMES_PER_PAGE = 18
 
 func (m model) View() string {
 	s := ""
