@@ -68,17 +68,17 @@ func (m model) View() string {
 
 	var selected_game wrapper.Game
 
-	for _, row := range m.gamesGrid {
+	for i, row := range m.gamesGrid {
 		var columnView string
 
-		for _, game := range row {
+		for j, game := range row {
 			var gameCell string
 
 			var gameState component.GameState
 
 			if game.IsRunning {
 				gameState = component.GS_RUNNING
-			} else if m.selectedGame != nil && game == *m.selectedGame {
+			} else if m.cursor.x == j && m.cursor.y == i {
 				gameState = component.GS_SELECTED
 			} else {
 				gameState = component.GS_NORMAL
