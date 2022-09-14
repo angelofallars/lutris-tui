@@ -19,7 +19,7 @@ func Start(wrapper wrapper.Wrapper, games []wrapper.Game) error {
 	return nil
 }
 
-type CursorPosition struct {
+type cursorPosition struct {
 	x int
 	y int
 }
@@ -27,7 +27,7 @@ type CursorPosition struct {
 type model struct {
 	lutris    wrapper.Wrapper
 	games     []wrapper.Game
-	cursor    CursorPosition
+	cursor    cursorPosition
 	paginator paginator.Model
 	start     int
 	end       int
