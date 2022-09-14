@@ -26,7 +26,7 @@ type CursorPosition struct {
 }
 
 type model struct {
-	lutris       lutris.Wrapper
+	lutrisClient lutris.Wrapper
 	games        []lutris.Game
 	cursor       CursorPosition
 	paginator    paginator.Model
@@ -45,10 +45,10 @@ func initialModel(wrapper lutris.Wrapper, games []lutris.Game) model {
 	p.SetTotalPages(len(games))
 
 	model := model{
-		lutris:    wrapper,
-		games:     games,
-		paginator: p,
-		rowCount:  3,
+		lutrisClient: wrapper,
+		games:        games,
+		paginator:    p,
+		rowCount:     3,
 	}
 
 	model.updateGameGrid(games, 0, _GAMES_PER_PAGE)
