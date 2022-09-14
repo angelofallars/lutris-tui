@@ -47,7 +47,7 @@ func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
 		lutris:    wrapper,
 		games:     games,
 		paginator: p,
-		gamesGrid: paginateTwoColumnGames(games, 0, _GAMES_PER_PAGE),
+		gamesGrid: updateGameGrid(games, 0, _GAMES_PER_PAGE),
 	}
 }
 
@@ -111,7 +111,7 @@ func (m model) View() string {
 	return s
 }
 
-func paginateTwoColumnGames(games []wrapper.Game, start int, end int) [][]wrapper.Game {
+func updateGameGrid(games []wrapper.Game, start int, end int) [][]wrapper.Game {
 	var gameLayout = [][]wrapper.Game{}
 
 	for i := start; i < end; i++ {
@@ -186,7 +186,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	m.start, m.end = m.paginator.GetSliceBounds(len(m.games))
-	m.gamesGrid = paginateTwoColumnGames(m.games, m.start, m.end)
+	m.gamesGrid = updateGameGrid(m.games, m.start, m.end)
 
 	return m, nil
 }
