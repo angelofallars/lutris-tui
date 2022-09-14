@@ -21,7 +21,7 @@ func Start(wrapper wrapper.Wrapper, games []wrapper.Game) error {
 	return nil
 }
 
-type cursorPosition struct {
+type CursorPosition struct {
 	x int
 	y int
 }
@@ -29,7 +29,7 @@ type cursorPosition struct {
 type model struct {
 	lutris       wrapper.Wrapper
 	games        []wrapper.Game
-	cursor       cursorPosition
+	cursor       CursorPosition
 	paginator    paginator.Model
 	start        int
 	end          int
@@ -64,36 +64,12 @@ const _GAMES_PER_PAGE = 12
 func (m model) View() string {
 	s := ""
 
-	gamesView := ""
+	gamesView := component.GamesGrid(m.gamesGrid, m.cursor.x, m.cursor.y)
 
-	var selected_game wrapper.Game
-
-	for i, row := range m.gamesGrid {
-		var columnView string
-
-		for j, game := range row {
-			var gameCell string
-
-			var gameState component.GameState
-
-			if game.IsRunning {
-				gameState = component.GS_RUNNING
-			} else if m.cursor.x == j && m.cursor.y == i {
-				gameState = component.GS_SELECTED
-			} else {
-				gameState = component.GS_NORMAL
-			}
-
-			gameCell = component.Game(game.Name, gameState)
-
-			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, " ", gameCell)
-		}
-
-		gamesView += columnView + "\n"
+	var gameStats string
+	if m.selectedGame != nil {
+		gameStats = component.GameStats(*m.selectedGame)
 	}
-
-	gamesView = S.StyleGamesView.Render(gamesView)
-	gameStats := component.GameStats(selected_game)
 
 	mainView := lipgloss.JoinHorizontal(lipgloss.Top, gamesView, "  ", gameStats)
 

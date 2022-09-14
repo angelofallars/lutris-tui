@@ -3,6 +3,8 @@ package components
 import (
 	S "lutris-tui/view/styles"
 	wrapper "lutris-tui/wrapper"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 func KeyValueLine(key string, value string) string {
@@ -27,6 +29,38 @@ func Game(name string, state GameState) string {
 	default:
 	}
 	return S.StyleGame.Render(name)
+}
+
+func GamesGrid(grid [][]wrapper.Game, cursorX int, cursorY int) string {
+	var gridView string
+
+	for i, row := range grid {
+		var columnView string
+
+		for j, game := range row {
+			var gameView string
+
+			var gameState GameState
+
+			if game.IsRunning {
+				gameState = GS_RUNNING
+			} else if cursorX == j && cursorY == i {
+				gameState = GS_SELECTED
+			} else {
+				gameState = GS_NORMAL
+			}
+
+			gameView = Game(game.Name, gameState)
+
+			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, " ", gameView)
+		}
+
+		gridView += columnView + "\n"
+	}
+
+	gridView = S.StyleGamesView.Render(gridView)
+
+	return gridView
 }
 
 func GameStats(game wrapper.Game) string {
