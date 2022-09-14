@@ -31,8 +31,8 @@ type model struct {
 	games        []wrapper.Game
 	cursor       CursorPosition
 	paginator    paginator.Model
-	start        int
-	end          int
+	pageStartIdx int
+	pageEndIdx   int
 	statusBar    string
 	gamesGrid    [][]wrapper.Game
 	selectedGame *wrapper.Game
@@ -163,8 +163,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	m.start, m.end = m.paginator.GetSliceBounds(len(m.games))
-	m.updateGameGrid(m.games, m.start, m.end)
+	m.pageStartIdx, m.pageEndIdx = m.paginator.GetSliceBounds(len(m.games))
+	m.updateGameGrid(m.games, m.pageStartIdx, m.pageEndIdx)
 	m.selectedGame = &m.gamesGrid[m.cursor.y][m.cursor.x]
 
 	return m, nil
