@@ -20,9 +20,12 @@ func Start(lutrisClient lutris.LutrisClient, games []lutris.Game) error {
 	return nil
 }
 
-type CursorPosition struct {
-	x int
-	y int
+type model struct {
+	lutrisClient lutris.LutrisClient
+	games        []lutris.Game
+	grid         gamesGrid
+	statusBar    string
+	selectedGame *lutris.Game
 }
 
 type gamesGrid struct {
@@ -32,13 +35,12 @@ type gamesGrid struct {
 	rowCount  int
 }
 
-type model struct {
-	lutrisClient lutris.LutrisClient
-	games        []lutris.Game
-	grid         gamesGrid
-	statusBar    string
-	selectedGame *lutris.Game
+type CursorPosition struct {
+	x int
+	y int
 }
+
+const _GAMES_PER_PAGE = 18
 
 func initialModel(lutrisClient lutris.LutrisClient, games []lutris.Game) model {
 	p := paginator.New()
@@ -64,8 +66,6 @@ func (m model) Init() tea.Cmd {
 	return nil
 }
 
-const _GAMES_PER_PAGE = 18
-
 func (m model) View() string {
 	s := ""
 
@@ -85,32 +85,6 @@ func (m model) View() string {
 
 	return s
 }
-
-func (m *model) updateGameGrid() {
-	var gameLayout = [][]lutris.Game{}
-
-	startIdx, endIdx := m.grid.paginator.GetSliceBounds(len(m.games))
-
-	for i := startIdx; i < endIdx; {
-		var rowGames []lutris.Game
-
-		for j := 0; j < m.grid.rowCount; j++ {
-			if i < endIdx {
-				rowGames = append(rowGames, m.games[i])
-				i++
-			} else {
-				break
-			}
-		}
-
-		gameLayout = append(gameLayout, rowGames)
-	}
-
-	m.grid.cells = gameLayout
-}
-
-type statusMsg int
-type errMsg struct{ err error }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -171,6 +145,32 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.selectedGame = &m.grid.cells[m.grid.cursor.y][m.grid.cursor.x]
 
 	return m, nil
+}
+
+type statusMsg int
+type errMsg struct{ err error }
+
+func (m *model) updateGameGrid() {
+	var gameLayout = [][]lutris.Game{}
+
+	startIdx, endIdx := m.grid.paginator.GetSliceBounds(len(m.games))
+
+	for i := startIdx; i < endIdx; {
+		var rowGames []lutris.Game
+
+		for j := 0; j < m.grid.rowCount; j++ {
+			if i < endIdx {
+				rowGames = append(rowGames, m.games[i])
+				i++
+			} else {
+				break
+			}
+		}
+
+		gameLayout = append(gameLayout, rowGames)
+	}
+
+	m.grid.cells = gameLayout
 }
 
 func runGame(game *lutris.Game) tea.Cmd {
