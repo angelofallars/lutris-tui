@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	view "lutris-tui/view"
-	wrapper "lutris-tui/wrapper"
+	lutris "lutris-tui/wrapper"
 )
 
 func main() {
-	client, err := wrapper.NewLutrisClient()
+	client, err := lutris.NewLutrisClient()
 
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
