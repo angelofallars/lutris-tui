@@ -2,12 +2,12 @@ package components
 
 import (
 	S "lutris-tui/view/styles"
-	wrapper "lutris-tui/wrapper"
+	lutris "lutris-tui/wrapper"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
-func Main(gamesGrid [][]wrapper.Game, cursorX int, cursorY int) string {
+func Main(gamesGrid [][]lutris.Game, cursorX int, cursorY int) string {
 	gamesGridView := GamesGrid(gamesGrid, cursorX, cursorY)
 	gameStatsView := GameStats(gamesGrid[cursorY][cursorX])
 	return lipgloss.JoinHorizontal(lipgloss.Top, gamesGridView, "  ", gameStatsView) + "\n"
@@ -33,7 +33,7 @@ func Game(name string, state GameState) string {
 	return S.StyleGame.Render(name)
 }
 
-func GamesGrid(grid [][]wrapper.Game, cursorX int, cursorY int) string {
+func GamesGrid(grid [][]lutris.Game, cursorX int, cursorY int) string {
 	var gridView string
 
 	for i, row := range grid {
@@ -65,7 +65,7 @@ func GamesGrid(grid [][]wrapper.Game, cursorX int, cursorY int) string {
 	return gridView
 }
 
-func GameStats(game wrapper.Game) string {
+func GameStats(game lutris.Game) string {
 	s := ""
 	s += S.StyleColoredText.Render("Game Stats") + "\n"
 	s += KeyValueLine("name", game.Name)
