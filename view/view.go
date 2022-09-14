@@ -27,14 +27,15 @@ type cursorPosition struct {
 }
 
 type model struct {
-	lutris    wrapper.Wrapper
-	games     []wrapper.Game
-	cursor    cursorPosition
-	paginator paginator.Model
-	start     int
-	end       int
-	statusBar string
-	gamesGrid [][]wrapper.Game
+	lutris       wrapper.Wrapper
+	games        []wrapper.Game
+	cursor       cursorPosition
+	paginator    paginator.Model
+	start        int
+	end          int
+	statusBar    string
+	gamesGrid    [][]wrapper.Game
+	selectedGame *wrapper.Game
 }
 
 func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
@@ -67,19 +68,18 @@ func (m model) View() string {
 
 	var selected_game wrapper.Game
 
-	for i, row := range m.gamesGrid {
+	for _, row := range m.gamesGrid {
 		var columnView string
 
-		for j, game := range row {
+		for _, game := range row {
 			var gameCell string
 
 			var gameState component.GameState
 
 			if game.IsRunning {
 				gameState = component.GS_RUNNING
-			} else if j == m.cursor.x && i == m.cursor.y {
+			} else if m.selectedGame != nil && game == *m.selectedGame {
 				gameState = component.GS_SELECTED
-				selected_game = game
 			} else {
 				gameState = component.GS_NORMAL
 			}
@@ -177,19 +177,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			// Run the game
-			selectedGame := &m.gamesGrid[m.cursor.y][m.cursor.x]
 
-			if selectedGame.IsRunning {
-				selectedGame.Stop()
+			if m.selectedGame.IsRunning {
+				m.selectedGame.Stop()
 			} else {
-				selectedGame.IsRunning = true
-				return m, runGame(selectedGame)
+				m.selectedGame.IsRunning = true
+				return m, runGame(m.selectedGame)
 			}
 		}
 	}
 
 	m.start, m.end = m.paginator.GetSliceBounds(len(m.games))
 	m.updateGameGrid(m.games, m.start, m.end)
+	m.selectedGame = &m.gamesGrid[m.cursor.y][m.cursor.x]
 
 	return m, nil
 }
