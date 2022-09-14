@@ -13,10 +13,6 @@ func Main(gamesGrid [][]wrapper.Game, cursorX int, cursorY int) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, gamesGridView, "  ", gameStatsView) + "\n"
 }
 
-func KeyValueLine(key string, value string) string {
-	return S.StyleNormal.Render(key+":") + " " + S.StyleDarkerText.Render(value) + "\n"
-}
-
 type GameState int
 
 const (
@@ -90,4 +86,8 @@ func GameStats(game wrapper.Game) string {
 	s = S.StyleGameStats.Render(s)
 
 	return s
+}
+
+func KeyValueLine(key string, value string) string {
+	return S.StyleNormal.Render(key+":") + " " + S.StyleDarkerText.Render(value) + "\n"
 }
