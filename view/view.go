@@ -1,6 +1,7 @@
 package view
 
 import (
+	S "lutris-tui/view/styles"
 	wrapper "lutris-tui/wrapper"
 
 	"github.com/charmbracelet/bubbles/paginator"
@@ -69,12 +70,12 @@ func (m model) View() string {
 			var gameCell string
 
 			if game.IsRunning {
-				gameCell = styleGameRunning.Render(game.Name)
+				gameCell = S.StyleGameRunning.Render(game.Name)
 			} else if j == m.cursor.x && i == m.cursor.y {
-				gameCell = styleGameSelected.Render(game.Name)
+				gameCell = S.StyleGameSelected.Render(game.Name)
 				selected_game = game
 			} else {
-				gameCell = styleGame.Render(game.Name)
+				gameCell = S.StyleGame.Render(game.Name)
 			}
 
 			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, " ", gameCell)
@@ -83,24 +84,24 @@ func (m model) View() string {
 		gamesView += columnView + "\n"
 	}
 
-	gamesView = styleGamesView.Render(gamesView)
+	gamesView = S.StyleGamesView.Render(gamesView)
 	gameStats := showGameStats(selected_game)
 
 	mainView := lipgloss.JoinHorizontal(lipgloss.Top, gamesView, "  ", gameStats)
 
 	s += mainView + "\n"
 
-	s += styleDarkerText.Render("  ──────────────────────────────") + "\n"
+	s += S.StyleDarkerText.Render("  ──────────────────────────────") + "\n"
 
-	s += "               " + styleDarkerText.Render(m.paginator.View()) + "\n"
-	s += "  " + styleNormal.Render("↑/k - up, ↓/j - down, q - quit") + "\n"
+	s += "               " + S.StyleDarkerText.Render(m.paginator.View()) + "\n"
+	s += "  " + S.StyleNormal.Render("↑/k - up, ↓/j - down, q - quit") + "\n"
 
 	if len(m.statusBar) > 0 {
-		s += styleNormal.Render(m.statusBar)
+		s += S.StyleNormal.Render(m.statusBar)
 	}
 	s += "\n"
 
-	s += styleDarkerText.Render("  LUTRIS TUI WRAPPER (alpha)") + "\n"
+	s += S.StyleDarkerText.Render("  LUTRIS TUI WRAPPER (alpha)") + "\n"
 
 	return s
 }
@@ -122,7 +123,7 @@ func paginateTwoColumnGames(games []wrapper.Game, start int, end int) [][]wrappe
 
 func showGameStats(game wrapper.Game) string {
 	s := ""
-	s += styleColoredText.Render("Game Stats") + "\n"
+	s += S.StyleColoredText.Render("Game Stats") + "\n"
 	s += makeKeyValueLine("name", game.Name)
 	s += makeKeyValueLine("platform", game.Platform)
 	s += makeKeyValueLine("runner", game.Runner)
@@ -135,16 +136,16 @@ func showGameStats(game wrapper.Game) string {
 	}
 
 	if game.IsRunning {
-		s += styleDarkerText.Render("Running") + "\n"
+		s += S.StyleDarkerText.Render("Running") + "\n"
 	}
 
-	s = styleGameStats.Render(s)
+	s = S.StyleGameStats.Render(s)
 
 	return s
 }
 
 func makeKeyValueLine(key string, value string) string {
-	return styleNormal.Render(key+":") + " " + styleDarkerText.Render(value) + "\n"
+	return S.StyleNormal.Render(key+":") + " " + S.StyleDarkerText.Render(value) + "\n"
 }
 
 type statusMsg int
