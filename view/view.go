@@ -3,13 +3,13 @@ package view
 import (
 	component "lutris-tui/view/components"
 	S "lutris-tui/view/styles"
-	wrapper "lutris-tui/wrapper"
+	lutris "lutris-tui/wrapper"
 
 	"github.com/charmbracelet/bubbles/paginator"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func Start(wrapper wrapper.Wrapper, games []wrapper.Game) error {
+func Start(wrapper lutris.Wrapper, games []lutris.Game) error {
 	model := initialModel(wrapper, games)
 	p := tea.NewProgram(model, tea.WithAltScreen())
 
@@ -26,19 +26,19 @@ type CursorPosition struct {
 }
 
 type model struct {
-	lutris       wrapper.Wrapper
-	games        []wrapper.Game
+	lutris       lutris.Wrapper
+	games        []lutris.Game
 	cursor       CursorPosition
 	paginator    paginator.Model
 	pageStartIdx int
 	pageEndIdx   int
 	statusBar    string
-	gamesGrid    [][]wrapper.Game
-	selectedGame *wrapper.Game
+	gamesGrid    [][]lutris.Game
+	selectedGame *lutris.Game
 	rowCount     int
 }
 
-func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
+func initialModel(wrapper lutris.Wrapper, games []lutris.Game) model {
 	p := paginator.New()
 	p.Type = paginator.Arabic
 	p.PerPage = _GAMES_PER_PAGE
@@ -82,11 +82,11 @@ func (m model) View() string {
 	return s
 }
 
-func (m *model) updateGameGrid(games []wrapper.Game, start int, end int) {
-	var gameLayout = [][]wrapper.Game{}
+func (m *model) updateGameGrid(games []lutris.Game, start int, end int) {
+	var gameLayout = [][]lutris.Game{}
 
 	for i := start; i < end; {
-		var rowGames []wrapper.Game
+		var rowGames []lutris.Game
 
 		for j := 0; j < m.rowCount; j++ {
 			if i < end {
@@ -168,7 +168,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func runGame(game *wrapper.Game) tea.Cmd {
+func runGame(game *lutris.Game) tea.Cmd {
 	return func() tea.Msg {
 		command, err := game.Start()
 
