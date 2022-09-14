@@ -29,8 +29,6 @@ type gamesGrid struct {
 	cells     [][]lutris.Game
 	cursor    CursorPosition
 	paginator paginator.Model
-	start     int
-	end       int
 	rowCount  int
 }
 
@@ -54,8 +52,6 @@ func initialModel(lutrisClient lutris.LutrisClient, games []lutris.Game) model {
 		grid: gamesGrid{
 			paginator: p,
 			rowCount:  3,
-			start:     0,
-			end:       _GAMES_PER_PAGE,
 		},
 	}
 
@@ -93,11 +89,13 @@ func (m model) View() string {
 func (m *model) updateGameGrid() {
 	var gameLayout = [][]lutris.Game{}
 
-	for i := m.grid.start; i < m.grid.end; {
+	startIdx, endIdx := m.grid.paginator.GetSliceBounds(len(m.games))
+
+	for i := startIdx; i < endIdx; {
 		var rowGames []lutris.Game
 
 		for j := 0; j < m.grid.rowCount; j++ {
-			if i < m.grid.end {
+			if i < endIdx {
 				rowGames = append(rowGames, m.games[i])
 				i++
 			} else {
@@ -169,7 +167,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	m.grid.start, m.grid.end = m.grid.paginator.GetSliceBounds(len(m.games))
 	m.updateGameGrid()
 	m.selectedGame = &m.grid.cells[m.grid.cursor.y][m.grid.cursor.x]
 
