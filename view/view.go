@@ -1,6 +1,7 @@
 package view
 
 import (
+	component "lutris-tui/view/components"
 	S "lutris-tui/view/styles"
 	wrapper "lutris-tui/wrapper"
 
@@ -69,14 +70,18 @@ func (m model) View() string {
 		for j, game := range row {
 			var gameCell string
 
+			var gameState component.GameState
+
 			if game.IsRunning {
-				gameCell = S.StyleGameRunning.Render(game.Name)
+				gameState = component.GS_RUNNING
 			} else if j == m.cursor.x && i == m.cursor.y {
-				gameCell = S.StyleGameSelected.Render(game.Name)
+				gameState = component.GS_SELECTED
 				selected_game = game
 			} else {
-				gameCell = S.StyleGame.Render(game.Name)
+				gameState = component.GS_NORMAL
 			}
+
+			gameCell = component.Game(game.Name, gameState)
 
 			columnView = lipgloss.JoinHorizontal(lipgloss.Center, columnView, " ", gameCell)
 		}
@@ -85,7 +90,7 @@ func (m model) View() string {
 	}
 
 	gamesView = S.StyleGamesView.Render(gamesView)
-	gameStats := showGameStats(selected_game)
+	gameStats := component.GameStats(selected_game)
 
 	mainView := lipgloss.JoinHorizontal(lipgloss.Top, gamesView, "  ", gameStats)
 
@@ -119,33 +124,6 @@ func paginateTwoColumnGames(games []wrapper.Game, start int, end int) [][]wrappe
 	}
 
 	return gameLayout
-}
-
-func showGameStats(game wrapper.Game) string {
-	s := ""
-	s += S.StyleColoredText.Render("Game Stats") + "\n"
-	s += makeKeyValueLine("name", game.Name)
-	s += makeKeyValueLine("platform", game.Platform)
-	s += makeKeyValueLine("runner", game.Runner)
-
-	if len(game.LastPlayed) != 0 {
-		s += makeKeyValueLine("last played", game.LastPlayed)
-	}
-	if len(game.PlayTime) != 0 {
-		s += makeKeyValueLine("playtime", game.PlayTime)
-	}
-
-	if game.IsRunning {
-		s += S.StyleDarkerText.Render("Running") + "\n"
-	}
-
-	s = S.StyleGameStats.Render(s)
-
-	return s
-}
-
-func makeKeyValueLine(key string, value string) string {
-	return S.StyleNormal.Render(key+":") + " " + S.StyleDarkerText.Render(value) + "\n"
 }
 
 type statusMsg int
