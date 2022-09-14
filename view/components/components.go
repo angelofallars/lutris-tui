@@ -7,6 +7,12 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+func Main(gamesGrid [][]wrapper.Game, cursorX int, cursorY int) string {
+	gamesGridView := GamesGrid(gamesGrid, cursorX, cursorY)
+	gameStatsView := GameStats(gamesGrid[cursorY][cursorX])
+	return lipgloss.JoinHorizontal(lipgloss.Top, gamesGridView, "  ", gameStatsView) + "\n"
+}
+
 func KeyValueLine(key string, value string) string {
 	return S.StyleNormal.Render(key+":") + " " + S.StyleDarkerText.Render(value) + "\n"
 }

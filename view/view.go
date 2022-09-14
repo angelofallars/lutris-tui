@@ -7,7 +7,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/paginator"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 func Start(wrapper wrapper.Wrapper, games []wrapper.Game) error {
@@ -64,16 +63,7 @@ const _GAMES_PER_PAGE = 12
 func (m model) View() string {
 	s := ""
 
-	gamesView := component.GamesGrid(m.gamesGrid, m.cursor.x, m.cursor.y)
-
-	var gameStats string
-	if m.selectedGame != nil {
-		gameStats = component.GameStats(*m.selectedGame)
-	}
-
-	mainView := lipgloss.JoinHorizontal(lipgloss.Top, gamesView, "  ", gameStats)
-
-	s += mainView + "\n"
+	s += component.Main(m.gamesGrid, m.cursor.x, m.cursor.y)
 
 	s += S.StyleDarkerText.Render("  ──────────────────────────────") + "\n"
 
