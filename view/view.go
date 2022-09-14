@@ -34,7 +34,7 @@ type model struct {
 	start     int
 	end       int
 	statusBar string
-	gamesView [][]wrapper.Game
+	gamesGrid [][]wrapper.Game
 }
 
 func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
@@ -47,7 +47,7 @@ func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
 		lutris:    wrapper,
 		games:     games,
 		paginator: p,
-		gamesView: paginateTwoColumnGames(games, 0, _GAMES_PER_PAGE),
+		gamesGrid: paginateTwoColumnGames(games, 0, _GAMES_PER_PAGE),
 	}
 }
 
@@ -64,7 +64,7 @@ func (m model) View() string {
 
 	var selected_game wrapper.Game
 
-	for i, row := range m.gamesView {
+	for i, row := range m.gamesGrid {
 		var columnView string
 
 		for j, game := range row {
@@ -144,8 +144,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "down", "j":
-			if m.cursor.y < len(m.gamesView)-1 {
-				gamesBelowCount := len(m.gamesView[m.cursor.y+1])
+			if m.cursor.y < len(m.gamesGrid)-1 {
+				gamesBelowCount := len(m.gamesGrid[m.cursor.y+1])
 				if m.cursor.x < gamesBelowCount {
 					m.cursor.y++
 					break
@@ -165,7 +165,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "right", "l":
-			if m.cursor.x < len(m.gamesView[m.cursor.y])-1 {
+			if m.cursor.x < len(m.gamesGrid[m.cursor.y])-1 {
 				m.cursor.x++
 			}
 
@@ -186,7 +186,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	m.start, m.end = m.paginator.GetSliceBounds(len(m.games))
-	m.gamesView = paginateTwoColumnGames(m.games, m.start, m.end)
+	m.gamesGrid = paginateTwoColumnGames(m.games, m.start, m.end)
 
 	return m, nil
 }
