@@ -13,21 +13,21 @@ func Main(gamesGrid [][]lutris.Game, cursorX int, cursorY int) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, gamesGridView, "  ", gameStatsView) + "\n"
 }
 
-type GameState int
+type gameState int
 
 const (
-	GS_NORMAL GameState = iota
-	GS_SELECTED
-	GS_RUNNING
+	_GS_NORMAL gameState = iota
+	_GS_SELECTED
+	_GS_RUNNING
 )
 
-func Game(name string, state GameState) string {
+func Game(name string, state gameState) string {
 	switch state {
-	case GS_SELECTED:
+	case _GS_SELECTED:
 		return S.StyleGameSelected.Render(name)
-	case GS_RUNNING:
+	case _GS_RUNNING:
 		return S.StyleGameRunning.Render(name)
-	case GS_NORMAL:
+	case _GS_NORMAL:
 	default:
 	}
 	return S.StyleGame.Render(name)
@@ -42,14 +42,14 @@ func GamesGrid(grid [][]lutris.Game, cursorX int, cursorY int) string {
 		for j, game := range row {
 			var gameView string
 
-			var gameState GameState
+			var gameState gameState
 
 			if game.IsRunning {
-				gameState = GS_RUNNING
+				gameState = _GS_RUNNING
 			} else if cursorX == j && cursorY == i {
-				gameState = GS_SELECTED
+				gameState = _GS_SELECTED
 			} else {
-				gameState = GS_NORMAL
+				gameState = _GS_NORMAL
 			}
 
 			gameView = Game(game.Name, gameState)
