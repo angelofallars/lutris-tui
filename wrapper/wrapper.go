@@ -12,23 +12,23 @@ import (
 var LutrisExecutableNotFound = errors.New("lutris executable not found")
 var LutrisCommandError = errors.New("lutris command failed")
 
-type Wrapper struct {
+type LutrisClient struct {
 	lutrisPath string
 }
 
-func NewWrapper() (Wrapper, error) {
+func NewLutrisClient() (LutrisClient, error) {
 	output, err := exec.Command("which", "lutris").Output()
 
 	if err != nil {
-		return Wrapper{lutrisPath: ""}, LutrisExecutableNotFound
+		return LutrisClient{lutrisPath: ""}, LutrisExecutableNotFound
 	}
 
 	lutris_path := strings.Trim(string(output), " \n")
 
-	return Wrapper{lutrisPath: lutris_path}, nil
+	return LutrisClient{lutrisPath: lutris_path}, nil
 }
 
-func (w *Wrapper) FetchGames() ([]Game, error) {
+func (w *LutrisClient) FetchGames() ([]Game, error) {
 	output, err := exec.Command(w.lutrisPath, "--list-games", "--json", "--installed").Output()
 
 	if err != nil {

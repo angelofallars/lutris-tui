@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	lutris, err := wrapper.NewWrapper()
+	lutris, err := wrapper.NewLutrisClient()
 
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)

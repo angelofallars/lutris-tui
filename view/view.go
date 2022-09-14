@@ -9,7 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func Start(wrapper lutris.Wrapper, games []lutris.Game) error {
+func Start(wrapper lutris.LutrisClient, games []lutris.Game) error {
 	model := initialModel(wrapper, games)
 	p := tea.NewProgram(model, tea.WithAltScreen())
 
@@ -26,7 +26,7 @@ type CursorPosition struct {
 }
 
 type model struct {
-	lutrisClient lutris.Wrapper
+	lutrisClient lutris.LutrisClient
 	games        []lutris.Game
 	cursor       CursorPosition
 	paginator    paginator.Model
@@ -38,7 +38,7 @@ type model struct {
 	rowCount     int
 }
 
-func initialModel(wrapper lutris.Wrapper, games []lutris.Game) model {
+func initialModel(wrapper lutris.LutrisClient, games []lutris.Game) model {
 	p := paginator.New()
 	p.Type = paginator.Arabic
 	p.PerPage = _GAMES_PER_PAGE
