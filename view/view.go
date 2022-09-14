@@ -35,6 +35,7 @@ type model struct {
 	statusBar    string
 	gamesGrid    [][]wrapper.Game
 	selectedGame *wrapper.Game
+	rowCount     int
 }
 
 func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
@@ -47,6 +48,7 @@ func initialModel(wrapper wrapper.Wrapper, games []wrapper.Game) model {
 		lutris:    wrapper,
 		games:     games,
 		paginator: p,
+		rowCount:  3,
 	}
 
 	model.updateGameGrid(games, 0, _GAMES_PER_PAGE)
@@ -83,13 +85,19 @@ func (m model) View() string {
 func (m *model) updateGameGrid(games []wrapper.Game, start int, end int) {
 	var gameLayout = [][]wrapper.Game{}
 
-	for i := start; i < end; i++ {
-		if i+1 < end {
-			gameLayout = append(gameLayout, []wrapper.Game{games[i], games[i+1]})
-			i++
-		} else {
-			gameLayout = append(gameLayout, []wrapper.Game{games[i]})
+	for i := start; i < end; {
+		var rowGames []wrapper.Game
+
+		for j := 0; j < m.rowCount; j++ {
+			if i < end {
+				rowGames = append(rowGames, games[i])
+				i++
+			} else {
+				break
+			}
 		}
+
+		gameLayout = append(gameLayout, rowGames)
 	}
 
 	m.gamesGrid = gameLayout
