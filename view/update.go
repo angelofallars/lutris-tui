@@ -38,7 +38,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.grid.cursor.y > 0 {
 				m.grid.cursor.y--
 			} else if m.grid.paginator.Page != 0 {
-				m.grid.cursor.y = len(m.grid.cells) - 1
+				m.grid.cursor.y = (m.grid.paginator.PerPage / m.grid.rowCount) - 1
 				m.grid.paginator.PrevPage()
 			}
 
